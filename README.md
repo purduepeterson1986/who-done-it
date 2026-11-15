@@ -6,11 +6,11 @@ It runs in any modern browser on a computer, tablet or phone. There is nothing t
 
 ## How to play
 
-1. Pick a difficulty and a mystery (or **Surprise me**), type your names if you like, and press **Start game**.
-2. A clue appears. It is the turn of the player shown at the top.
+1. Pick **1 Player** (practice on your own) or **2 Players**, a difficulty, and a mystery (or **Surprise me**). Type your names if you like, and press **Start game**.
+2. A clue appears. In a 2-player game, it is the turn of the player shown at the top.
 3. Either:
-   - **Guess.** Tap the suspect you think did it, then press **Guess**. Right, and you win the game. Wrong, and that suspect is flipped down and you lose your turn.
-   - **Pass.** The other player gets the next clue.
+   - **Guess.** Tap the suspect you think did it, then press **Guess**. Right, and you win the game. Wrong, and that suspect is flipped down. In a 2-player game you also lose your turn; in a 1-player game the next clue appears.
+   - **Pass.** The other player gets the next clue (in a 1-player game, you just get the next clue).
 4. Every clue rules out some suspects. The last clue leaves only one, so the game always has a winner.
 
 ## Flipping suspects

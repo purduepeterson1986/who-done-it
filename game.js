@@ -12,7 +12,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   /* ---------- saved settings ---------- */
-  var settings = { level: 1, theme: 'random', auto: true, autoTouched: false, names: ['', ''], sound: true };
+  var settings = { level: 1, theme: 'random', auto: true, autoTouched: false, names: ['', ''], sound: true, players: 2 };
   try {
     var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (saved) for (var k in saved) settings[k] = saved[k];
@@ -71,8 +71,31 @@
   /* ---------- setup screen ---------- */
   var levelChoice = settings.level;
   var themeChoice = settings.theme;
+  var playersChoice = settings.players === 1 ? 1 : 2;
+
+  function summaryText() {
+    var who = playersChoice === 1
+      ? (settings.names[0] || 'Solo practice')
+      : (settings.names[0] || 'Player 1') + ' vs ' + (settings.names[1] || 'Player 2');
+    return 'Level ' + levelChoice + ' · ' + who;
+  }
 
   function renderSetup() {
+    var players = $('player-count');
+    players.innerHTML = '';
+    [{ n: 1, title: '1 Player', sub: 'Practice on your own.' }, { n: 2, title: '2 Players', sub: 'Take turns.' }].forEach(function (p) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'seg';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', String(p.n === playersChoice));
+      b.innerHTML = '<span class="seg-title">' + p.title + '</span><span class="seg-sub">' + p.sub + '</span>';
+      b.addEventListener('click', function () { playersChoice = p.n; renderSetup(); });
+      players.appendChild(b);
+    });
+    $('name-b-field').hidden = playersChoice === 1;
+    $('h-players').textContent = playersChoice === 1 ? 'Your name' : 'Players';
+
     var levels = $('levels');
     levels.innerHTML = '';
     [1, 2, 3].forEach(function (lv) {
@@ -112,7 +135,7 @@
       ? 'On. Suspects that can\'t be right flip down by themselves.'
       : 'Off. You flip the suspects down yourself.';
 
-    $('summary').textContent = 'Level ' + levelChoice + ' · ' + (settings.names[0] || 'Player 1') + ' vs ' + (settings.names[1] || 'Player 2');
+    $('summary').textContent = summaryText();
     $('name-a').value = settings.names[0] || '';
     $('name-b').value = settings.names[1] || '';
   }
@@ -127,18 +150,22 @@
     settings.level = levelChoice;
     settings.theme = themeChoice;
     settings.names = [$('name-a').value.trim(), $('name-b').value.trim()];
+    settings.players = playersChoice;
     saveSettings();
     startGame();
   });
 
-  $('name-a').addEventListener('input', function () { settings.names[0] = this.value.trim(); $('summary').textContent = 'Level ' + levelChoice + ' · ' + (settings.names[0] || 'Player 1') + ' vs ' + (settings.names[1] || 'Player 2'); });
-  $('name-b').addEventListener('input', function () { settings.names[1] = this.value.trim(); $('summary').textContent = 'Level ' + levelChoice + ' · ' + (settings.names[0] || 'Player 1') + ' vs ' + (settings.names[1] || 'Player 2'); });
+  $('name-a').addEventListener('input', function () { settings.names[0] = this.value.trim(); $('summary').textContent = summaryText(); });
+  $('name-b').addEventListener('input', function () { settings.names[1] = this.value.trim(); $('summary').textContent = summaryText(); });
 
   /* ---------- game state ---------- */
   var G = null;
   // G = { m: mystery, names: [a, b], turn: 0|1, clueIdx, selected, over, auto, flip: {id: 'open'|'gray'} }
 
-  function nameOf(i) { return G.names[i] || ('Player ' + (i + 1)); }
+  function nameOf(i) {
+    if (G.players === 1) return G.names[0] || 'You';
+    return G.names[i] || ('Player ' + (i + 1));
+  }
 
   function startGame() {
     var mystery = WhoDoneIt.generate({
@@ -147,6 +174,7 @@
     });
     G = {
       m: mystery,
+      players: settings.players === 1 ? 1 : 2,
       names: [settings.names[0], settings.names[1]],
       turn: 0,
       clueIdx: 0,
@@ -194,7 +222,11 @@
     var pill = $('turn-pill');
     var dot = $('turn-dot');
     dot.className = 'name-dot ' + (G.turn === 0 ? 'dot-a' : 'dot-b');
-    $('turn-text').textContent = nameOf(G.turn) + '’s turn';
+    if (G.players === 1 && !G.names[0]) {
+      $('turn-text').textContent = 'Your turn';
+    } else {
+      $('turn-text').textContent = nameOf(G.turn) + '’s turn';
+    }
     pill.style.background = G.turn === 0 ? '#c4541c' : '#2168a8';
 
     var clueEl = $('clue-text');
@@ -233,7 +265,11 @@
     $('auto-toggle-game').checked = G.auto;
   }
 
-  function otherTurn() { G.turn = 1 - G.turn; G.selected = null; }
+  // In a 1-player game the same player always keeps the turn; the next clue just appears.
+  function otherTurn() {
+    if (G.players === 2) G.turn = 1 - G.turn;
+    G.selected = null;
+  }
 
   function effectiveDescribe() { return G.m.describeCulprit(); }
 
@@ -276,7 +312,7 @@
     G.clueIdx++;
     otherTurn();
     sfxPass();
-    toast(nameOf(G.turn) + ' gets the next clue.');
+    toast(G.players === 1 ? 'Here is the next clue.' : nameOf(G.turn) + ' gets the next clue.');
     renderGame(true);
   });
 
@@ -297,7 +333,7 @@
     if (G.clueIdx < G.m.clues.length - 1) G.clueIdx++;
     var loser = nameOf(G.turn);
     otherTurn();
-    toast('Not them! ' + loser + ' loses the turn.');
+    toast(G.players === 1 ? 'Not them! Here is the next clue.' : 'Not them! ' + loser + ' loses the turn.');
     renderGame(true);
   });
 
@@ -307,11 +343,13 @@
     var winner = nameOf(G.turn);
     renderGame(false);
     var culprit = G.m.suspects[G.m.culprit.id];
+    var heading = G.players === 1 ? (G.names[0] ? escapeHtml(winner) + ' solved it!' : 'You solved it!') : escapeHtml(winner) + ' solved it!';
     showModal(
       '<div class="trophy" aria-hidden="true">&#127942;</div>' +
-      '<h3>' + escapeHtml(winner) + ' solved it!</h3>' +
+      '<h3>' + heading + '</h3>' +
       '<div class="culprit">' + WhoArt.suspect(culprit) + '</div>' +
-      '<p>It was ' + escapeHtml(effectiveDescribe()) + '</p>',
+      '<p>It was ' + escapeHtml(effectiveDescribe()) + '.</p>' +
+      '<p>Solved with clue ' + (G.clueIdx + 1) + ' of ' + G.m.clues.length + '.</p>',
       [
         { label: 'Play again', cls: 'primary', fn: function () { startGame(); } },
         { label: 'Settings', cls: 'ghost', fn: function () { closeModal(); show('setup'); renderSetup(); } }

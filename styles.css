@@ -165,6 +165,7 @@ h1, h2, p { margin: 0; }
 
 /* Segmented difficulty */
 .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.levels.two { grid-template-columns: repeat(2, 1fr); margin-bottom: 12px; }
 .seg {
   border: 1px solid var(--line); background: rgba(0, 0, 0, .2); border-radius: 18px;
   padding: 14px 12px; text-align: center; transition: transform .15s var(--ease), background .2s, border-color .2s;

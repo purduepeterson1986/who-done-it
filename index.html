@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Who Done It?">
   <!-- When any file below changes, change the ?v= tag on all four so browsers fetch the new copies. -->
-  <link rel="stylesheet" href="styles.css?v=2026-11-14c">
+  <link rel="stylesheet" href="styles.css?v=2026-11-14d">
 </head>
 <body>
   <div class="backdrop" aria-hidden="true"></div>
@@ -30,12 +30,13 @@
 
       <section class="panel" aria-labelledby="h-players">
         <div class="panel-head"><h2 id="h-players">Players</h2></div>
+        <div class="levels two" id="player-count" role="radiogroup" aria-label="Number of players"></div>
         <div class="names">
           <label class="name-field">
             <span class="name-dot dot-a" aria-hidden="true"></span>
             <input id="name-a" type="text" maxlength="14" placeholder="Player 1" autocomplete="off">
           </label>
-          <label class="name-field">
+          <label class="name-field" id="name-b-field">
             <span class="name-dot dot-b" aria-hidden="true"></span>
             <input id="name-b" type="text" maxlength="14" placeholder="Player 2" autocomplete="off">
           </label>
@@ -125,8 +126,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="mystery.js?v=2026-11-14c"></script>
-  <script src="art.js?v=2026-11-14c"></script>
-  <script src="game.js?v=2026-11-14c"></script>
+  <script src="mystery.js?v=2026-11-14d"></script>
+  <script src="art.js?v=2026-11-14d"></script>
+  <script src="game.js?v=2026-11-14d"></script>
 </body>
 </html>
