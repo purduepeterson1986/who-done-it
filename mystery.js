@@ -30,12 +30,12 @@ var WhoDoneIt = (function () {
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
-      id: 'monster',
-      name: 'Monster Pajama Party',
-      intro: 'It is bedtime at the monster pajama party, but someone skipped a very important step.',
-      question: 'Which friendly monster forgot to brush their teeth?',
-      ending: 'Teeth are brushed, pajamas are on, and the monsters are ready for bed!',
-      species: ['Red Monster', 'Blue Monster', 'Green Monster', 'Yellow Monster', 'Purple Monster', 'Orange Monster']
+      id: 'clown',
+      name: 'The Circus Balloon',
+      intro: 'The big circus balloon floated away, and the clowns all say it wasn’t them.',
+      question: 'Which clown let the balloon get away?',
+      ending: 'The balloon is back at the circus, and the show can go on!',
+      species: ['Red Clown', 'Blue Clown', 'Green Clown', 'Yellow Clown', 'Purple Clown', 'Orange Clown']
     }
   ];
 

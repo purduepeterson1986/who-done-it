@@ -32,7 +32,7 @@ Tap the little badge in a suspect's corner to flip them down, and tap it again t
 - The Missing Birthday Cake
 - The Secret Gift Giver
 - The Runaway Pet
-- Monster Pajama Party
+- The Circus Balloon
 
 Every game makes a new set of suspects and a new clue order, so the same mystery rarely comes up twice.
 
