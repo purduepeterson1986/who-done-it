@@ -17,7 +17,7 @@ It runs in any modern browser on a computer, tablet or phone. There is nothing t
 
 Tap the little badge in a suspect's corner to flip them down, and tap it again to flip them back up.
 
-**Auto-flip** (on the setup screen and under the board) flips down any suspect that can't match the clues so far. Turn it off to do all the crossing out yourself.
+The game does not cross suspects off for you. Use the badges to keep track of who is still in the running.
 
 ## Difficulty
 

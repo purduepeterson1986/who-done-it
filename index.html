@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Who Done It?">
   <!-- When any file below changes, change the ?v= tag on all four so browsers fetch the new copies. -->
-  <link rel="stylesheet" href="styles.css?v=2026-11-14h">
+  <link rel="stylesheet" href="styles.css?v=2026-11-15a">
 </head>
 <body>
   <div class="backdrop" aria-hidden="true"></div>
@@ -54,16 +54,6 @@
         <div class="themes" id="themes" role="radiogroup" aria-label="Mystery"></div>
       </section>
 
-      <section class="panel" aria-labelledby="h-auto">
-        <div class="panel-head"><h2 id="h-auto">Auto-flip</h2></div>
-        <label class="switch-row">
-          <span class="switch-text">
-            <strong>Flip down cards that can't be right</strong>
-            <span class="hint" id="auto-hint"></span>
-          </span>
-          <input id="auto-toggle" class="switch" type="checkbox" role="switch">
-        </label>
-      </section>
     </div>
 
     <footer class="setup-footer">
@@ -103,10 +93,6 @@
       <div class="board" id="board" role="list"></div>
 
       <div class="action-bar">
-        <label class="switch-row compact">
-          <span class="switch-text"><strong>Auto-flip</strong></span>
-          <input id="auto-toggle-game" class="switch" type="checkbox" role="switch">
-        </label>
         <div class="action-buttons">
           <button class="btn pass big" id="pass-btn" type="button">Pass</button>
           <button class="btn primary big guess" id="guess-btn" type="button" disabled>Guess</button>
@@ -126,8 +112,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="mystery.js?v=2026-11-14h"></script>
-  <script src="art.js?v=2026-11-14h"></script>
-  <script src="game.js?v=2026-11-14h"></script>
+  <script src="mystery.js?v=2026-11-15a"></script>
+  <script src="art.js?v=2026-11-15a"></script>
+  <script src="game.js?v=2026-11-15a"></script>
 </body>
 </html>

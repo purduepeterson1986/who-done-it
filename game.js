@@ -12,7 +12,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   /* ---------- saved settings ---------- */
-  var settings = { level: 1, theme: 'random', auto: true, autoTouched: false, names: ['', ''], sound: true, players: 2 };
+  var settings = { level: 1, theme: 'random', names: ['', ''], sound: true, players: 2 };
   try {
     var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (saved) for (var k in saved) settings[k] = saved[k];
@@ -107,7 +107,6 @@
       b.innerHTML = '<span class="seg-title">' + LEVEL_INFO[lv].title + '</span><span class="seg-sub">' + LEVEL_INFO[lv].sub + '</span>';
       b.addEventListener('click', function () {
         levelChoice = lv;
-        if (!settings.autoTouched) settings.auto = (lv === 1);
         renderSetup();
       });
       levels.appendChild(b);
@@ -129,22 +128,10 @@
       themes.appendChild(b);
     });
 
-    var toggle = $('auto-toggle');
-    toggle.checked = !!settings.auto;
-    $('auto-hint').textContent = settings.auto
-      ? 'On. Suspects that can\'t be right flip down by themselves.'
-      : 'Off. You flip the suspects down yourself.';
-
     $('summary').textContent = summaryText();
     $('name-a').value = settings.names[0] || '';
     $('name-b').value = settings.names[1] || '';
   }
-
-  $('auto-toggle').addEventListener('change', function () {
-    settings.auto = this.checked;
-    settings.autoTouched = true;
-    renderSetup();
-  });
 
   $('start-btn').addEventListener('click', function () {
     settings.level = levelChoice;
@@ -160,7 +147,7 @@
 
   /* ---------- game state ---------- */
   var G = null;
-  // G = { m: mystery, names: [a, b], turn: 0|1, clueIdx, selected, over, auto, flip: {id: 'open'|'gray'} }
+  // G = { m: mystery, names: [a, b], turn: 0|1, clueIdx, selected, over, flip: {id: 'gray'} }  (flip marks suspects the player crossed off)
 
   function nameOf(i) {
     if (G.players === 1) return G.names[0] || 'You';
@@ -180,7 +167,6 @@
       clueIdx: 0,
       selected: null,
       over: false,
-      auto: !!settings.auto,
       flip: {}
     };
     closeModal();
@@ -188,7 +174,6 @@
     $('level-label').textContent = 'Level ' + mystery.level + ' · ' + mystery.theme.name;
     $('question').innerHTML = '<span class="story-intro">' + escapeHtml(mystery.theme.intro) + '</span>' +
       '<span class="story-ask">' + escapeHtml(mystery.theme.question) + '</span>';
-    $('auto-toggle-game').checked = G.auto;
     renderGame(true);
   }
 
@@ -197,18 +182,8 @@
     $('game').classList.toggle('active', which === 'game');
   }
 
-  function failsRevealed(s) {
-    for (var i = 0; i <= G.clueIdx; i++) {
-      if (!G.m.clues[i].test(s)) return true;
-    }
-    return false;
-  }
-
   function isGray(s) {
-    var f = G.flip[s.id];
-    if (f === 'gray') return true;
-    if (f === 'open') return false;
-    return G.auto && failsRevealed(s);
+    return G.flip[s.id] === 'gray';
   }
 
   function renderGame(fresh) {
@@ -264,7 +239,6 @@
       : last
         ? 'This is the last clue. Pick a suspect and make your guess!'
         : 'Tap a suspect to pick them. Tap the little badge to flip them down.';
-    $('auto-toggle-game').checked = G.auto;
   }
 
   // In a 1-player game the same player always keeps the turn; the next clue just appears.
@@ -298,15 +272,6 @@
     if (!card) return;
     e.preventDefault();
     card.click();
-  });
-
-  $('auto-toggle-game').addEventListener('change', function () {
-    if (!G) return;
-    G.auto = this.checked;
-    settings.auto = G.auto;
-    settings.autoTouched = true;
-    saveSettings();
-    renderGame(false);
   });
 
   $('pass-btn').addEventListener('click', function () {
