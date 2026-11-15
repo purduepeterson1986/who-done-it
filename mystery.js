@@ -181,6 +181,9 @@ var WhoDoneIt = (function () {
       suspects[suspectIndex].row = Math.floor(cell / cfg.cols);
       suspects[suspectIndex].col = cell % cfg.cols;
     });
+    // Put the suspects in grid order so the board shows them where the clues say they are.
+    suspects.sort(function (a, b) { return a.row - b.row || a.col - b.col; });
+    suspects.forEach(function (s, i) { s.id = i; });
     return suspects;
   }
 
