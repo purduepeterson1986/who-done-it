@@ -249,6 +249,7 @@
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', (G.selected === s.id ? 'Picked. ' : '') + (gray ? 'Flipped down. ' : '') + 'Suspect');
       card.innerHTML = WhoArt.suspect(s) +
+        '<span class="species-tag">' + escapeHtml(s.traits.species) + '</span>' +
         '<button class="flip" type="button" aria-label="' + (gray ? 'Flip up' : 'Flip down') + '">' + (gray ? '&#8634;' : '&#10005;') + '</button>';
       board.appendChild(card);
     });
