@@ -5,14 +5,14 @@ var WhoArt = (function () {
   var uid = 0;
 
   var BODY = {
-    Fox: '#f08a3c', Bear: '#b07a4a', Owl: '#a57c52', Rabbit: '#f3ece4', Cat: '#aeb6c8', Dog: '#d9a46a',
+    Fox: '#f08a3c', Bear: '#6e4325', Owl: '#8f7a62', Rabbit: '#fbf8f4', Cat: '#9aa3b8', Dog: '#e8b767',
     'Red Monster': '#e5484d', 'Blue Monster': '#3d7bdc', 'Green Monster': '#3fb36b',
     'Yellow Monster': '#f2c230', 'Purple Monster': '#9a5fd6', 'Orange Monster': '#f58a2a',
     'Red Clown': '#e5484d', 'Blue Clown': '#3d7bdc', 'Green Clown': '#3fb36b',
     'Yellow Clown': '#f2c230', 'Purple Clown': '#9a5fd6', 'Orange Clown': '#f58a2a'
   };
   var DARK = {
-    Fox: '#b8581e', Bear: '#7a4a28', Owl: '#6b4c2e', Rabbit: '#d7c7b8', Cat: '#7d8699', Dog: '#a87644',
+    Fox: '#b8581e', Bear: '#4a2c16', Owl: '#5e4c3a', Rabbit: '#e2b8c4', Cat: '#6b7388', Dog: '#9a6a2e',
     'Red Monster': '#a52a2e', 'Blue Monster': '#245aa6', 'Green Monster': '#23814a',
     'Yellow Monster': '#b38c12', 'Purple Monster': '#6a3aa0', 'Orange Monster': '#b75c12',
     'Red Clown': '#a52a2e', 'Blue Clown': '#245aa6', 'Green Clown': '#23814a',
@@ -31,18 +31,28 @@ var WhoArt = (function () {
              '<circle cx="50" cy="20" r="9" fill="' + body + '"/>' +
              '<circle cx="20" cy="36" r="4" fill="' + dark + '"/><circle cx="80" cy="36" r="4" fill="' + dark + '"/>';
     }
-    if (species === 'Fox' || species === 'Cat') {
-      return '<polygon points="26,34 30,8 46,26" fill="' + body + '"/>' +
-             '<polygon points="74,34 70,8 54,26" fill="' + body + '"/>' +
-             '<polygon points="31,30 33,16 40,26" fill="' + dark + '"/>' +
-             '<polygon points="69,30 67,16 60,26" fill="' + dark + '"/>';
+    if (species === 'Fox') {
+      // tall, sharp ears with dark tips
+      return '<polygon points="24,36 28,4 48,26" fill="' + body + '"/>' +
+             '<polygon points="76,36 72,4 52,26" fill="' + body + '"/>' +
+             '<polygon points="28,12 30,6 38,22" fill="' + dark + '"/>' +
+             '<polygon points="72,12 70,6 62,22" fill="' + dark + '"/>';
+    }
+    if (species === 'Cat') {
+      // short, rounded ears
+      return '<polygon points="27,38 30,20 44,30" fill="' + body + '"/>' +
+             '<polygon points="73,38 70,20 56,30" fill="' + body + '"/>' +
+             '<polygon points="31,32 33,25 39,30" fill="' + dark + '"/>' +
+             '<polygon points="69,32 67,25 61,30" fill="' + dark + '"/>';
     }
     if (species === 'Bear') {
-      return '<circle cx="28" cy="30" r="10" fill="' + body + '"/><circle cx="72" cy="30" r="10" fill="' + body + '"/>' +
-             '<circle cx="28" cy="30" r="5" fill="' + dark + '"/><circle cx="72" cy="30" r="5" fill="' + dark + '"/>';
+      // big round ears
+      return '<circle cx="26" cy="30" r="13" fill="' + body + '"/><circle cx="74" cy="30" r="13" fill="' + body + '"/>' +
+             '<circle cx="26" cy="30" r="6.5" fill="' + dark + '"/><circle cx="74" cy="30" r="6.5" fill="' + dark + '"/>';
     }
     if (species === 'Rabbit') {
-      return '<ellipse cx="38" cy="16" rx="7" ry="18" fill="' + body + '"/><ellipse cx="62" cy="16" rx="7" ry="18" fill="' + body + '"/>' +
+      return '<ellipse cx="38" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5"/>' +
+             '<ellipse cx="62" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5"/>' +
              '<ellipse cx="38" cy="18" rx="3" ry="11" fill="#f5b5c0"/><ellipse cx="62" cy="18" rx="3" ry="11" fill="#f5b5c0"/>';
     }
     if (species === 'Dog') {
@@ -154,6 +164,36 @@ var WhoArt = (function () {
     }
   }
 
+  // Each animal's snout and nose, so they are easy to tell apart. Drawn over the head.
+  function snout(species) {
+    if (/Clown/.test(species)) return '<circle cx="50" cy="58" r="5" fill="#e5484d"/>';
+    if (/Monster/.test(species)) return '';
+    switch (species) {
+      case 'Fox':
+        // pale, pointed muzzle with a black nose
+        return '<polygon points="34,54 66,54 50,76" fill="#fff3e0"/><circle cx="50" cy="55" r="3.5" fill="#222"/>';
+      case 'Cat':
+        // pink triangle nose and whiskers
+        return '<polygon points="46,55 54,55 50,62" fill="#ff8fa3"/>' +
+               '<path d="M22,56 L36,58 M22,63 L36,61 M78,56 L64,58 M78,63 L64,61" stroke="#333" stroke-width="1.4" fill="none"/>';
+      case 'Bear':
+        // round light snout with a big black nose
+        return '<ellipse cx="50" cy="63" rx="15" ry="11" fill="#e3c9a2"/><ellipse cx="50" cy="57" rx="5" ry="3.8" fill="#222"/>';
+      case 'Dog':
+        // floppy-eared pup with a cream muzzle and black nose
+        return '<ellipse cx="50" cy="63" rx="13" ry="9" fill="#fbeedd"/><ellipse cx="50" cy="57" rx="6" ry="4.5" fill="#222"/>';
+      case 'Owl':
+        // big white eye rings and a little orange beak
+        return '<circle cx="40" cy="50" r="9" fill="#ffffff"/><circle cx="60" cy="50" r="9" fill="#ffffff"/>' +
+               '<ellipse cx="50" cy="63" rx="10" ry="7" fill="#f3e2c4"/><polygon points="46,59 54,59 50,67" fill="#f0a030"/>';
+      case 'Rabbit':
+        // small pink nose
+        return '<ellipse cx="50" cy="60" rx="4" ry="3" fill="#f08aa0"/>';
+      default:
+        return '';
+    }
+  }
+
   /* Returns SVG markup for one suspect. */
   function suspect(s) {
     var t = s.traits;
@@ -172,13 +212,10 @@ var WhoArt = (function () {
       // ears
       ears(species, dark, body) +
       // head (clowns have a white painted face)
-      '<ellipse cx="50" cy="52" rx="30" ry="27" fill="' + (/Clown/.test(species) ? '#fff7ef' : body) + '"/>' +
-      // muzzle for animals, red nose for clowns, nothing for monsters
-      (species === 'Owl'
-        ? '<ellipse cx="50" cy="62" rx="16" ry="12" fill="#f3e2c4"/><polygon points="46,58 54,58 50,66" fill="#f0a030"/>'
-        : /Clown/.test(species)
-          ? '<circle cx="50" cy="58" r="5" fill="#e5484d"/>'
-          : (/Monster/.test(species) ? '' : '<ellipse cx="50" cy="62" rx="12" ry="8" fill="#ffffff" opacity=".85"/>')) +
+      '<ellipse cx="50" cy="52" rx="30" ry="27" fill="' + (/Clown/.test(species) ? '#fff7ef' : body) + '"' +
+      (species === 'Rabbit' ? ' stroke="#b9aca0" stroke-width="2.5"' : '') + '/>' +
+      // snout and nose (animals, clowns; monsters have none)
+      snout(species) +
       cheek +
       face(t.expression) +
       eyewear(t.eyewear) +
