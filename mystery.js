@@ -50,14 +50,14 @@ var WhoDoneIt = (function () {
   // What each trait value says about a suspect. Used to write the clue sentences.
   var PHRASE = {
     headwear: {
-      'None': 'is not wearing a hat',
+      'None': 'is NOT wearing a hat',
       'Crown': 'is wearing a crown',
       'Party Hat': 'is wearing a party hat',
       'Wizard Hat': 'is wearing a wizard hat',
       'Baseball Cap': 'is wearing a baseball cap'
     },
     eyewear: {
-      'None': 'is not wearing glasses',
+      'None': 'is NOT wearing glasses',
       'Sunglasses': 'is wearing sunglasses',
       'Round Glasses': 'is wearing round glasses',
       'Monocle': 'is wearing a monocle'
@@ -70,7 +70,7 @@ var WhoDoneIt = (function () {
       'Star Shirt': 'has a star shirt'
     },
     item: {
-      'None': 'is not holding anything',
+      'None': 'is NOT holding anything',
       'Balloon': 'is holding a balloon',
       'Magnifying Glass': 'is holding a magnifying glass',
       'Ice Cream Cone': 'is holding an ice cream cone',
