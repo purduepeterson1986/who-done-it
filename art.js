@@ -5,14 +5,14 @@ var WhoArt = (function () {
   var uid = 0;
 
   var BODY = {
-    Fox: '#f08a3c', Bear: '#6e4325', Owl: '#8f7a62', Rabbit: '#fbf8f4', Cat: '#9aa3b8', Dog: '#e8b767',
+    Fox: '#f08a3c', Bear: '#6e4325', Owl: '#a7784a', Rabbit: '#fbf8f4', Cat: '#9aa3b8', Dog: '#e8b767',
     'Red Monster': '#e5484d', 'Blue Monster': '#3d7bdc', 'Green Monster': '#3fb36b',
     'Yellow Monster': '#f2c230', 'Purple Monster': '#9a5fd6', 'Orange Monster': '#f58a2a',
     'Red Clown': '#e5484d', 'Blue Clown': '#3d7bdc', 'Green Clown': '#3fb36b',
     'Yellow Clown': '#f2c230', 'Purple Clown': '#9a5fd6', 'Orange Clown': '#f58a2a'
   };
   var DARK = {
-    Fox: '#b8581e', Bear: '#4a2c16', Owl: '#5e4c3a', Rabbit: '#e2b8c4', Cat: '#6b7388', Dog: '#9a6a2e',
+    Fox: '#b8581e', Bear: '#4a2c16', Owl: '#6e5232', Rabbit: '#e2b8c4', Cat: '#6b7388', Dog: '#9a6a2e',
     'Red Monster': '#a52a2e', 'Blue Monster': '#245aa6', 'Green Monster': '#23814a',
     'Yellow Monster': '#b38c12', 'Purple Monster': '#6a3aa0', 'Orange Monster': '#b75c12',
     'Red Clown': '#a52a2e', 'Blue Clown': '#245aa6', 'Green Clown': '#23814a',
@@ -60,7 +60,11 @@ var WhoArt = (function () {
              '<ellipse cx="80" cy="50" rx="9" ry="17" fill="' + dark + '" transform="rotate(-14 80 50)"/>';
     }
     if (species === 'Owl') {
-      return '<polygon points="30,30 32,8 44,26" fill="' + dark + '"/><polygon points="70,30 68,8 56,26" fill="' + dark + '"/>';
+      // tall, sharp feather tufts (taller and sharper than the cat's ears)
+      return '<polygon points="25,34 28,2 46,24" fill="' + dark + '"/>' +
+             '<polygon points="75,34 72,2 54,24" fill="' + dark + '"/>' +
+             '<polygon points="30,26 31,12 39,23" fill="' + body + '"/>' +
+             '<polygon points="70,26 69,12 61,23" fill="' + body + '"/>';
     }
     // Monsters: two little horns
     return '<polygon points="28,30 22,8 40,24" fill="' + dark + '"/><polygon points="72,30 78,8 60,24" fill="' + dark + '"/>';
@@ -174,7 +178,8 @@ var WhoArt = (function () {
         return '<polygon points="34,54 66,54 50,76" fill="#fff3e0"/><circle cx="50" cy="55" r="3.5" fill="#222"/>';
       case 'Cat':
         // pink triangle nose and whiskers
-        return '<polygon points="46,55 54,55 50,62" fill="#ff8fa3"/>' +
+        return '<path d="M50,27 L50,35 M43,28 L44,35 M57,28 L56,35" stroke="#4a5263" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
+               '<polygon points="46,55 54,55 50,62" fill="#ff8fa3"/>' +
                '<path d="M22,56 L36,58 M22,63 L36,61 M78,56 L64,58 M78,63 L64,61" stroke="#333" stroke-width="1.4" fill="none"/>';
       case 'Bear':
         // round light snout with a big black nose
@@ -184,7 +189,7 @@ var WhoArt = (function () {
         return '<ellipse cx="50" cy="63" rx="13" ry="9" fill="#fbeedd"/><ellipse cx="50" cy="57" rx="6" ry="4.5" fill="#222"/>';
       case 'Owl':
         // big white eye rings and a little orange beak
-        return '<circle cx="40" cy="50" r="9" fill="#ffffff"/><circle cx="60" cy="50" r="9" fill="#ffffff"/>' +
+        return '<circle cx="40" cy="50" r="11" fill="#ffffff"/><circle cx="60" cy="50" r="11" fill="#ffffff"/>' +
                '<ellipse cx="50" cy="63" rx="10" ry="7" fill="#f3e2c4"/><polygon points="46,59 54,59 50,67" fill="#f0a030"/>';
       case 'Rabbit':
         // small pink nose
@@ -208,7 +213,9 @@ var WhoArt = (function () {
     return '<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' +
       '<defs>' + shirt.defs + '</defs>' +
       // body and shirt
-      '<path d="M26,84 Q26,76 36,76 L64,76 Q74,76 74,84 L76,120 L24,120 Z" fill="' + shirt.fill + '"/>' +
+      // shirts with white in them get a faint outline so they show on a white background
+      '<path d="M26,84 Q26,76 36,76 L64,76 Q74,76 74,84 L76,120 L24,120 Z" fill="' + shirt.fill + '"' +
+      (t.shirt === 'Striped' || t.shirt === 'Polka-dot' ? ' stroke="#b9aca0" stroke-width="1.5"' : '') + '/>' +
       // ears
       ears(species, dark, body) +
       // head (clowns have a white painted face)
