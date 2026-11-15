@@ -186,7 +186,8 @@
     closeModal();
     show('game');
     $('level-label').textContent = 'Level ' + mystery.level + ' · ' + mystery.theme.name;
-    $('question').textContent = mystery.theme.question;
+    $('question').innerHTML = '<span class="story-intro">' + escapeHtml(mystery.theme.intro) + '</span>' +
+      '<span class="story-ask">' + escapeHtml(mystery.theme.question) + '</span>';
     $('auto-toggle-game').checked = G.auto;
     renderGame(true);
   }
@@ -350,6 +351,7 @@
       '<h3>' + heading + '</h3>' +
       '<div class="culprit">' + WhoArt.suspect(culprit) + '</div>' +
       '<p>It was ' + escapeHtml(effectiveDescribe()) + '.</p>' +
+      '<p class="story-end">' + escapeHtml(G.m.theme.ending) + '</p>' +
       '<p>Solved with clue ' + (G.clueIdx + 1) + ' of ' + G.m.clues.length + '.</p>',
       [
         { label: 'Play again', cls: 'primary', fn: function () { startGame(); } },

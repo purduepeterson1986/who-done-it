@@ -249,7 +249,11 @@ h1, h2, p { margin: 0; }
 
 .question {
   text-align: center; font-weight: 800; font-size: clamp(1rem, 2.4vw, 1.3rem); color: var(--ink-dim);
+  display: flex; flex-direction: column; gap: 6px;
 }
+.story-intro { font-weight: 600; font-style: italic; font-size: .92em; color: var(--ink-faint); }
+.story-ask { color: var(--ink-dim); }
+.story-end { color: var(--gold); font-weight: 700; font-size: 1.05rem; margin-top: 10px; }
 
 .clue-card {
   background: var(--card); color: #2a2250; border-radius: 26px; padding: 16px 20px 18px;
@@ -258,10 +262,10 @@ h1, h2, p { margin: 0; }
 }
 @keyframes clue-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
 .turn-pill {
-  display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px 6px 8px; border-radius: 999px;
-  background: #2a2250; color: #fff; font-weight: 800; font-size: 1rem;
+  display: inline-flex; align-items: center; gap: 12px; padding: 8px 20px 8px 10px; border-radius: 999px;
+  background: #2a2250; color: #fff; font-weight: 800; font-size: 1.4rem;
 }
-.turn-pill .name-dot { box-shadow: 0 0 0 3px rgba(255, 255, 255, .25); }
+.turn-pill .name-dot { width: 22px; height: 22px; box-shadow: 0 0 0 3px rgba(255, 255, 255, .25); }
 .clue-text {
   margin-top: 12px; font-size: clamp(1.4rem, 3.6vw, 2rem); font-weight: 800; line-height: 1.25; color: #2a2250;
 }

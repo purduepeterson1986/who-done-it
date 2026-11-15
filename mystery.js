@@ -8,25 +8,33 @@ var WhoDoneIt = (function () {
     {
       id: 'cake',
       name: 'The Missing Birthday Cake',
+      intro: 'The party starts soon, but the giant strawberry cake has vanished!',
       question: 'Who ate the giant strawberry cake before the party?',
+      ending: 'The cake is back on the table, and the party can start. Everyone gets a slice!',
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
       id: 'gift',
       name: 'The Secret Gift Giver',
+      intro: 'A wrapped present was waiting on the doorstep, with no name on it.',
       question: 'Who left the mystery present on the doorstep?',
+      ending: 'The mystery is solved, and the present can finally be opened!',
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
       id: 'pet',
       name: 'The Runaway Pet',
+      intro: 'A mischievous puppy has run away, and someone knows where it went.',
       question: 'Who is hiding the mischievous puppy in their treehouse?',
+      ending: 'The puppy is home safe, wagging its tail. Good detective work!',
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
       id: 'monster',
       name: 'Monster Pajama Party',
+      intro: 'It is bedtime at the monster pajama party, but someone skipped a very important step.',
       question: 'Which friendly monster forgot to brush their teeth?',
+      ending: 'Teeth are brushed, pajamas are on, and the monsters are ready for bed!',
       species: ['Red Monster', 'Blue Monster', 'Green Monster', 'Yellow Monster', 'Purple Monster', 'Orange Monster']
     }
   ];
