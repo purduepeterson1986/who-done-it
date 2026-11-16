@@ -26,6 +26,7 @@
   var AC = null;
   function audio() {
     try {
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* not supported */ } // iPhone/iPad: play sound even with the silent switch on
       if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
       if (AC.state === 'suspended') AC.resume();
     } catch (e) { AC = null; }
