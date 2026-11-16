@@ -11,6 +11,7 @@ var WhoDoneIt = (function () {
       intro: 'The party starts soon, but the giant strawberry cake has vanished!',
       question: 'Who ate the giant strawberry cake before the party?',
       ending: 'The cake is back on the table, and the party can start. Everyone gets a slice!',
+      animals: true,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -19,6 +20,7 @@ var WhoDoneIt = (function () {
       intro: 'A wrapped present was waiting on the doorstep, with no name on it.',
       question: 'Who left the mystery present on the doorstep?',
       ending: 'The mystery is solved, and the present can finally be opened!',
+      animals: true,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -27,6 +29,7 @@ var WhoDoneIt = (function () {
       intro: 'A mischievous puppy has run away, and someone knows where it went.',
       question: 'Who is hiding the mischievous puppy in their treehouse?',
       ending: 'The puppy is home safe, wagging its tail. Good detective work!',
+      animals: true,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -97,6 +100,19 @@ var WhoDoneIt = (function () {
   var FIXED = { headwear: 'None', eyewear: 'None', shirt: 'Solid Blue', item: 'None', expression: 'Happy smile' };
   var OPTIONAL_TRAITS = ['headwear', 'eyewear', 'shirt', 'item', 'expression'];
 
+  // Animal facts. Each one is yes or no for every animal, set by its species,
+  // so they never pick a random value. Only used by the animal mysteries.
+  var FACTS = [
+    { key: 'house', animals: ['Cat', 'Dog'], phrase: 'lives in a house' },
+    { key: 'woods', animals: ['Fox', 'Bear', 'Owl', 'Rabbit'], phrase: 'lives in the woods' },
+    { key: 'den', animals: ['Fox', 'Bear', 'Rabbit'], phrase: 'has an underground den or burrow' },
+    { key: 'night', animals: ['Owl', 'Fox', 'Cat'], phrase: 'is awake at night' },
+    { key: 'pet', animals: ['Cat', 'Dog', 'Rabbit'], phrase: 'can be a pet' },
+    { key: 'pointy', animals: ['Fox', 'Cat', 'Owl'], phrase: 'has pointy ears' }
+  ];
+  var FACT_PHRASE = {};
+  FACTS.forEach(function (f) { FACT_PHRASE[f.key] = f.phrase; });
+
   function pick(arr, rnd) { return arr[Math.floor(rnd() * arr.length)]; }
 
   function shuffle(arr, rnd) {
@@ -115,7 +131,9 @@ var WhoDoneIt = (function () {
     return phrase
       .replace(/^is /, 'is NOT ')
       .replace(/^has /, 'does NOT have ')
-      .replace(/^looks /, 'does NOT look ');
+      .replace(/^looks /, 'does NOT look ')
+      .replace(/^lives /, 'does NOT live ')
+      .replace(/^can /, 'can NOT ');
   }
 
   // Build a single clue atom: one trait value, possibly negated.
@@ -123,6 +141,7 @@ var WhoDoneIt = (function () {
     var phrase;
     if (trait === 'species') phrase = 'is ' + article(value) + ' ' + value;
     else if (trait === 'position') phrase = value.phrase;
+    else if (FACT_PHRASE[trait]) phrase = FACT_PHRASE[trait];
     else phrase = PHRASE[trait][value];
     if (neg) phrase = negate(phrase);
     return {
@@ -162,7 +181,7 @@ var WhoDoneIt = (function () {
     return base + ' with ' + parts.join(', ').replace(/, ([^,]*)$/, ' and $1');
   }
 
-  function buildSuspects(theme, active, cfg, rnd) {
+  function buildSuspects(theme, active, cfg, rnd, facts) {
     var values = function (t) { return t === 'species' ? theme.species : TRAIT_VALUES[t]; };
     var suspects = [];
     var seen = {};
@@ -172,6 +191,7 @@ var WhoDoneIt = (function () {
       var traits = {};
       Object.keys(FIXED).forEach(function (k) { traits[k] = FIXED[k]; });
       active.forEach(function (t) { traits[t] = pick(values(t), rnd); });
+      facts.forEach(function (f) { traits[f.key] = f.animals.indexOf(traits.species) >= 0; });
       var key = active.map(function (t) { return traits[t]; }).join('|');
       if (seen[key]) continue;
       seen[key] = true;
@@ -182,7 +202,7 @@ var WhoDoneIt = (function () {
       var first = suspects[0].traits[t];
       return suspects.some(function (s) { return s.traits[t] !== first; });
     });
-    if (!varies) return buildSuspects(theme, active, cfg, rnd);
+    if (!varies) return buildSuspects(theme, active, cfg, rnd, facts);
 
     var cells = shuffle(suspects.map(function (s, i) { return i; }), rnd);
     cells.forEach(function (suspectIndex, cell) {
@@ -195,7 +215,7 @@ var WhoDoneIt = (function () {
     return suspects;
   }
 
-  function candidateClues(level, active, suspects, cfg, rnd) {
+  function candidateClues(level, active, suspects, cfg, rnd, facts) {
     var list = [];
     var atoms = [];
     var seenAtom = {};
@@ -207,6 +227,11 @@ var WhoDoneIt = (function () {
         atoms.push(atom(t, v, false));
         if (v !== 'None') atoms.push(atom(t, v, true));
       });
+    });
+
+    facts.forEach(function (f) {
+      atoms.push(atom(f.key, true, false));
+      atoms.push(atom(f.key, true, true));
     });
 
     if (level >= 3) {
@@ -276,11 +301,13 @@ var WhoDoneIt = (function () {
     var optional = shuffle(OPTIONAL_TRAITS, rnd).slice(0, cfg.traits - 1);
     var active = ['species'].concat(optional);
 
-    var suspects = buildSuspects(theme, active, cfg, rnd);
+    var facts = theme.animals ? FACTS : [];
+
+    var suspects = buildSuspects(theme, active, cfg, rnd, facts);
     var culpritIndex = Math.floor(rnd() * suspects.length);
     var culprit = suspects[culpritIndex];
 
-    var pool = candidateClues(level, active, suspects, cfg, rnd);
+    var pool = candidateClues(level, active, suspects, cfg, rnd, facts);
     var remaining = suspects.slice();
     var clues = [];
 
