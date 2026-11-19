@@ -1,20 +1,19 @@
-/* Who Done It? - draws each suspect as a simple SVG character. */
+/* Who Done It? - draws each suspect as a simple SVG character.
+   Picture is 100 wide and 120 tall. The eyes are always at y=50 and the mouth
+   around y=64-74, so glasses and expressions line up on every character.
+   Each animal has its own head shape, ears and muzzle so they are easy to tell apart. */
 var WhoArt = (function () {
   'use strict';
 
   var uid = 0;
 
   var BODY = {
-    Fox: '#f08a3c', Bear: '#6e4325', Owl: '#a7784a', Rabbit: '#fbf8f4', Cat: '#9aa3b8', Dog: '#e8b767',
-    'Red Monster': '#e5484d', 'Blue Monster': '#3d7bdc', 'Green Monster': '#3fb36b',
-    'Yellow Monster': '#f2c230', 'Purple Monster': '#9a5fd6', 'Orange Monster': '#f58a2a',
+    Fox: '#f08a3c', Bear: '#6b4120', Owl: '#a7784a', Rabbit: '#fbf8f4', Cat: '#9aa3b8', Dog: '#e8b767',
     'Red Clown': '#e5484d', 'Blue Clown': '#3d7bdc', 'Green Clown': '#3fb36b',
     'Yellow Clown': '#f2c230', 'Purple Clown': '#9a5fd6', 'Orange Clown': '#f58a2a'
   };
   var DARK = {
-    Fox: '#b8581e', Bear: '#4a2c16', Owl: '#6e5232', Rabbit: '#e2b8c4', Cat: '#6b7388', Dog: '#9a6a2e',
-    'Red Monster': '#a52a2e', 'Blue Monster': '#245aa6', 'Green Monster': '#23814a',
-    'Yellow Monster': '#b38c12', 'Purple Monster': '#6a3aa0', 'Orange Monster': '#b75c12',
+    Fox: '#b8581e', Bear: '#33190a', Owl: '#6e5232', Rabbit: '#e2b8c4', Cat: '#6b7388', Dog: '#9a6a2e',
     'Red Clown': '#a52a2e', 'Blue Clown': '#245aa6', 'Green Clown': '#23814a',
     'Yellow Clown': '#b38c12', 'Purple Clown': '#6a3aa0', 'Orange Clown': '#b75c12'
   };
@@ -24,68 +23,158 @@ var WhoArt = (function () {
     'Polka-dot': '#3fb36b', 'Star Shirt': '#9a5fd6'
   };
 
-  function ears(species, dark, body) {
-    if (/Clown/.test(species)) {
-      // Clowns: curly hair puffs on each side of the head
-      return '<circle cx="20" cy="36" r="11" fill="' + body + '"/><circle cx="80" cy="36" r="11" fill="' + body + '"/>' +
-             '<circle cx="50" cy="20" r="9" fill="' + body + '"/>' +
-             '<circle cx="20" cy="36" r="4" fill="' + dark + '"/><circle cx="80" cy="36" r="4" fill="' + dark + '"/>';
+  function isClown(species) { return /Clown/.test(species); }
+
+  /* ---------- ears and hair (drawn behind the head) ----------
+     Ears sit out to the sides, so a hat in the middle of the head never hides them. */
+  function ears(species, dark, body, t) {
+    if (isClown(species)) {
+      if (t.curly) {
+        // Curly hair: bunches of round puffs on each side and on top
+        return '<circle cx="20" cy="34" r="11" fill="' + body + '"/><circle cx="80" cy="34" r="11" fill="' + body + '"/>' +
+               '<circle cx="14" cy="47" r="8" fill="' + body + '"/><circle cx="86" cy="47" r="8" fill="' + body + '"/>' +
+               '<circle cx="50" cy="20" r="9" fill="' + body + '"/>' +
+               '<circle cx="20" cy="34" r="4" fill="' + dark + '"/><circle cx="80" cy="34" r="4" fill="' + dark + '"/>' +
+               '<circle cx="14" cy="47" r="3" fill="' + dark + '"/><circle cx="86" cy="47" r="3" fill="' + dark + '"/>';
+      }
+      // Spiky hair: big pointed tufts on each side (they show even under a hat) and one on top
+      return '<polygon points="0,20 34,30 20,46" fill="' + body + '"/><polygon points="100,20 66,30 80,46" fill="' + body + '"/>' +
+             '<polygon points="0,50 26,36 24,58" fill="' + body + '"/><polygon points="100,50 74,36 76,58" fill="' + body + '"/>' +
+             '<polygon points="40,26 50,4 60,26" fill="' + body + '"/>';
     }
-    if (species === 'Fox') {
-      // tall, sharp ears with dark tips
-      return '<polygon points="24,36 28,4 48,26" fill="' + body + '"/>' +
-             '<polygon points="76,36 72,4 52,26" fill="' + body + '"/>' +
-             '<polygon points="28,12 30,6 38,22" fill="' + dark + '"/>' +
-             '<polygon points="72,12 70,6 62,22" fill="' + dark + '"/>';
+    switch (species) {
+      case 'Fox':
+        // tall, sharp ears with dark tips, set wide on the head
+        return '<polygon points="16,44 16,3 42,26" fill="' + body + '"/>' +
+               '<polygon points="84,44 84,3 58,26" fill="' + body + '"/>' +
+               '<polygon points="16,3 16,16 26,14" fill="' + dark + '"/>' +
+               '<polygon points="84,3 84,16 74,14" fill="' + dark + '"/>' +
+               '<polygon points="20,30 20,14 32,26" fill="#fff3e0"/>' +
+               '<polygon points="80,30 80,14 68,26" fill="#fff3e0"/>';
+      case 'Cat':
+        // short ears with pink insides
+        return '<polygon points="24,40 26,18 44,30" fill="' + body + '"/>' +
+               '<polygon points="76,40 74,18 56,30" fill="' + body + '"/>' +
+               '<polygon points="29,33 30,24 38,30" fill="#f5b5c0"/>' +
+               '<polygon points="71,33 70,24 62,30" fill="#f5b5c0"/>';
+      case 'Bear':
+        // big round ears
+        return '<circle cx="22" cy="30" r="13" fill="' + body + '"/><circle cx="78" cy="30" r="13" fill="' + body + '"/>' +
+               '<circle cx="22" cy="30" r="6.5" fill="#a8774c"/><circle cx="78" cy="30" r="6.5" fill="#a8774c"/>';
+      case 'Rabbit':
+        // long ears, set apart so a hat fits between them
+        return '<ellipse cx="33" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5" transform="rotate(-8 33 16)"/>' +
+               '<ellipse cx="67" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5" transform="rotate(8 67 16)"/>' +
+               '<ellipse cx="33" cy="18" rx="3" ry="11" fill="#f5b5c0" transform="rotate(-8 33 16)"/>' +
+               '<ellipse cx="67" cy="18" rx="3" ry="11" fill="#f5b5c0" transform="rotate(8 67 16)"/>';
+      case 'Dog':
+        // long floppy ears hanging down past the cheeks (drawn in front of the head, see dogEars)
+        return '';
+      case 'Owl':
+        // feather tufts, darker and set wide
+        return '<polygon points="18,38 14,2 40,24" fill="' + dark + '"/>' +
+               '<polygon points="82,38 86,2 60,24" fill="' + dark + '"/>';
+      default:
+        return '';
     }
-    if (species === 'Cat') {
-      // short, rounded ears
-      return '<polygon points="27,38 30,20 44,30" fill="' + body + '"/>' +
-             '<polygon points="73,38 70,20 56,30" fill="' + body + '"/>' +
-             '<polygon points="31,32 33,25 39,30" fill="' + dark + '"/>' +
-             '<polygon points="69,32 67,25 61,30" fill="' + dark + '"/>';
-    }
-    if (species === 'Bear') {
-      // big round ears
-      return '<circle cx="26" cy="30" r="13" fill="' + body + '"/><circle cx="74" cy="30" r="13" fill="' + body + '"/>' +
-             '<circle cx="26" cy="30" r="6.5" fill="' + dark + '"/><circle cx="74" cy="30" r="6.5" fill="' + dark + '"/>';
-    }
-    if (species === 'Rabbit') {
-      return '<ellipse cx="38" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5"/>' +
-             '<ellipse cx="62" cy="16" rx="7" ry="18" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5"/>' +
-             '<ellipse cx="38" cy="18" rx="3" ry="11" fill="#f5b5c0"/><ellipse cx="62" cy="18" rx="3" ry="11" fill="#f5b5c0"/>';
-    }
-    if (species === 'Dog') {
-      return '<ellipse cx="20" cy="50" rx="9" ry="17" fill="' + dark + '" transform="rotate(14 20 50)"/>' +
-             '<ellipse cx="80" cy="50" rx="9" ry="17" fill="' + dark + '" transform="rotate(-14 80 50)"/>';
-    }
-    if (species === 'Owl') {
-      // tall, sharp feather tufts (taller and sharper than the cat's ears)
-      return '<polygon points="25,34 28,2 46,24" fill="' + dark + '"/>' +
-             '<polygon points="75,34 72,2 54,24" fill="' + dark + '"/>' +
-             '<polygon points="30,26 31,12 39,23" fill="' + body + '"/>' +
-             '<polygon points="70,26 69,12 61,23" fill="' + body + '"/>';
-    }
-    // Monsters: two little horns
-    return '<polygon points="28,30 22,8 40,24" fill="' + dark + '"/><polygon points="72,30 78,8 60,24" fill="' + dark + '"/>';
   }
 
+  /* ---------- head shapes ---------- */
+  function head(species, body) {
+    if (isClown(species)) return '<ellipse cx="50" cy="52" rx="30" ry="27" fill="#fff7ef"/>';
+    switch (species) {
+      case 'Fox':
+        // narrow head that comes to a point at the chin
+        return '<path d="M18,40 Q50,20 82,40 Q80,60 66,72 Q58,80 50,81 Q42,80 34,72 Q20,60 18,40 Z" fill="' + body + '"/>';
+      case 'Bear':
+        // wide, round head
+        return '<ellipse cx="50" cy="53" rx="34" ry="28" fill="' + body + '"/>';
+      case 'Owl':
+        // tall egg-shaped head
+        return '<ellipse cx="50" cy="53" rx="27" ry="30" fill="' + body + '"/>';
+      case 'Cat':
+        return '<ellipse cx="50" cy="53" rx="31" ry="26" fill="' + body + '"/>';
+      case 'Rabbit':
+        return '<ellipse cx="50" cy="53" rx="28" ry="27" fill="' + body + '" stroke="#b9aca0" stroke-width="2.5"/>';
+      default:
+        return '<ellipse cx="50" cy="52" rx="30" ry="27" fill="' + body + '"/>';
+    }
+  }
+
+  /* ---------- muzzles, noses and markings (drawn on the head, under the eyes) ---------- */
+  function snout(species, body, dark) {
+    if (isClown(species)) {
+      // a round patch of face paint around the mouth in the clown's own color (a plain shape,
+      // so it never makes a grumpy clown look like it is smiling), and a red nose
+      return '<ellipse cx="50" cy="69" rx="13" ry="8.5" fill="' + body + '" opacity=".55"/>' +
+             '<circle cx="50" cy="58" r="5.5" fill="#e5484d"/><circle cx="48" cy="56" r="1.6" fill="#fff" opacity=".7"/>';
+    }
+    switch (species) {
+      case 'Fox':
+        // white cheek fluff sticking out at the sides, white muzzle, small black nose
+        return '<polygon points="22,48 6,66 34,70" fill="' + body + '"/><polygon points="78,48 94,66 66,70" fill="' + body + '"/>' +
+               '<polygon points="24,56 13,65 32,67" fill="#fff3e0"/><polygon points="76,56 87,65 68,67" fill="#fff3e0"/>' +
+               '<path d="M34,60 Q50,56 66,60 Q62,74 50,80 Q38,74 34,60 Z" fill="#fff3e0"/>' +
+               '<ellipse cx="50" cy="60" rx="3.5" ry="3" fill="#222"/>';
+      case 'Cat':
+        // forehead stripes, pink nose, long whiskers
+        return '<path d="M50,29 L50,37 M43,30 L44,37 M57,30 L56,37" stroke="#4a5263" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
+               '<polygon points="46,56 54,56 50,62" fill="#ff8fa3"/>' +
+               '<path d="M12,55 L36,59 M12,64 L36,62 M88,55 L64,59 M88,64 L64,62" stroke="#333" stroke-width="1.4" fill="none"/>';
+      case 'Bear':
+        // one big round light snout and a big black nose
+        return '<ellipse cx="50" cy="65" rx="16" ry="12" fill="#d9b98a"/><ellipse cx="50" cy="58" rx="6" ry="4.2" fill="#111"/>';
+      case 'Dog':
+        // brown patch over one eye, two round cheeks (jowls) and a big nose
+        return '<ellipse cx="61" cy="48" rx="10" ry="9" fill="' + dark + '" opacity=".75"/>' +
+               '<circle cx="43" cy="65" r="8" fill="#fbeedd"/><circle cx="57" cy="65" r="8" fill="#fbeedd"/>' +
+               '<ellipse cx="50" cy="58" rx="6.5" ry="4.5" fill="#222"/>';
+      case 'Owl':
+        // little feather marks, big white eye rings, small beak between the eyes
+        return '<path d="M41,30 l3,3 l3,-3 M47,27 l3,3 l3,-3 M53,30 l3,3 l3,-3" stroke="' + dark + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+               '<circle cx="40" cy="50" r="11" fill="#ffffff"/><circle cx="60" cy="50" r="11" fill="#ffffff"/>' +
+               '<polygon points="46,54 54,54 50,63" fill="#f0a030"/>';
+      case 'Rabbit':
+        // round puffy muzzle and pink nose
+        return '<circle cx="45.5" cy="63" r="5.5" fill="#f1eaea"/><circle cx="54.5" cy="63" r="5.5" fill="#f1eaea"/>' +
+               '<ellipse cx="50" cy="59" rx="4" ry="3" fill="#f08aa0"/>';
+      default:
+        return '';
+    }
+  }
+
+  // Drawn after the face: the dog's floppy ears hang over the sides of the head,
+  // and the rabbit's buck teeth show under its mouth.
+  function frontBits(species, dark) {
+    if (species === 'Dog') {
+      return '<ellipse cx="17" cy="56" rx="9" ry="21" fill="' + dark + '" transform="rotate(12 17 56)"/>' +
+             '<ellipse cx="83" cy="56" rx="9" ry="21" fill="' + dark + '" transform="rotate(-12 83 56)"/>';
+    }
+    if (species === 'Rabbit') {
+      return '<rect x="46.4" y="72" width="3.4" height="5" rx=".8" fill="#fff" stroke="#b9aca0" stroke-width=".8"/>' +
+             '<rect x="50.2" y="72" width="3.4" height="5" rx=".8" fill="#fff" stroke="#b9aca0" stroke-width=".8"/>';
+    }
+    return '';
+  }
+
+  /* ---------- hats (narrow, so they sit between the ears) ---------- */
   function headwear(kind) {
     switch (kind) {
       case 'Crown':
-        return '<polygon points="32,26 35,6 43,18 50,2 57,18 65,6 68,26" fill="#f6c453" stroke="#c98a10" stroke-width="2" stroke-linejoin="round"/>' +
-               '<circle cx="50" cy="16" r="2.5" fill="#e5484d"/>';
+        return '<polygon points="37,29 39,10 44,20 50,5 56,20 61,10 63,29" fill="#f6c453" stroke="#c98a10" stroke-width="2" stroke-linejoin="round"/>' +
+               '<circle cx="50" cy="20" r="2.5" fill="#e5484d"/>';
       case 'Party Hat':
-        return '<polygon points="40,27 50,-2 60,27" fill="#ff7ab6"/>' +
-               '<polygon points="44,18 56,18 50,6" fill="#ffe36b"/>' +
-               '<circle cx="50" cy="-3" r="4" fill="#54d1db"/>';
+        return '<polygon points="41,29 50,-1 59,29" fill="#ff7ab6"/>' +
+               '<polygon points="44.5,19 55.5,19 50,7" fill="#ffe36b"/>' +
+               '<circle cx="50" cy="-1" r="4" fill="#54d1db"/>';
       case 'Wizard Hat':
-        return '<polygon points="34,27 52,-6 66,27" fill="#4a3fb0"/>' +
-               '<ellipse cx="50" cy="27" rx="20" ry="4.5" fill="#362d8a"/>' +
-               '<text x="52" y="14" font-size="9" text-anchor="middle" fill="#ffe36b">&#9733;</text>';
+        return '<polygon points="38,28 53,-6 62,28" fill="#4a3fb0"/>' +
+               '<ellipse cx="50" cy="28" rx="16" ry="4" fill="#362d8a"/>' +
+               '<text x="52" y="17" font-size="9" text-anchor="middle" fill="#ffe36b">&#9733;</text>';
       case 'Baseball Cap':
-        return '<path d="M30,30 Q32,8 50,8 Q68,8 70,30 Z" fill="#e5484d"/>' +
-               '<path d="M26,30 Q50,24 74,30 Q70,35 56,35 L44,35 Q30,35 26,30 Z" fill="#b8323a"/>';
+        return '<path d="M35,31 Q36,11 50,11 Q64,11 65,31 Z" fill="#e5484d"/>' +
+               '<path d="M33,31 Q52,26 74,30 Q72,35 60,35 L42,35 Q34,35 33,31 Z" fill="#b8323a"/>' +
+               '<circle cx="50" cy="12" r="2" fill="#b8323a"/>';
       default:
         return '';
     }
@@ -96,7 +185,9 @@ var WhoArt = (function () {
       case 'Sunglasses':
         return '<rect x="30" y="44" width="17" height="12" rx="5" fill="#222"/>' +
                '<rect x="53" y="44" width="17" height="12" rx="5" fill="#222"/>' +
-               '<line x1="47" y1="48" x2="53" y2="48" stroke="#222" stroke-width="2"/>';
+               '<line x1="47" y1="48" x2="53" y2="48" stroke="#222" stroke-width="2"/>' +
+               '<line x1="33" y1="47" x2="38" y2="47" stroke="#fff" stroke-width="1.5" opacity=".5"/>' +
+               '<line x1="56" y1="47" x2="61" y2="47" stroke="#fff" stroke-width="1.5" opacity=".5"/>';
       case 'Round Glasses':
         return '<circle cx="39" cy="50" r="8" fill="none" stroke="#333" stroke-width="2.5"/>' +
                '<circle cx="61" cy="50" r="8" fill="none" stroke="#333" stroke-width="2.5"/>' +
@@ -109,18 +200,24 @@ var WhoArt = (function () {
     }
   }
 
+  /* ---------- expressions ----------
+     Each one has its own mouth, so you can still tell them apart when sunglasses hide the eyes:
+     happy = smile, surprised = round "O", grumpy = frown. Grumpy also has eyebrows slanted down,
+     drawn above where sunglasses sit so they still show. */
   function face(expression) {
     var eyes, mouth;
     if (expression === 'Surprised') {
-      eyes = '<circle cx="40" cy="50" r="4.5" fill="#222"/><circle cx="60" cy="50" r="4.5" fill="#222"/>';
-      mouth = '<ellipse cx="50" cy="66" rx="4" ry="5.5" fill="#222"/>';
-    } else if (expression === 'Winking') {
-      eyes = '<circle cx="40" cy="50" r="3.5" fill="#222"/>' +
-             '<path d="M55,50 Q60,44 65,50" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
-      mouth = '<path d="M40,64 Q50,74 60,64" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
+      eyes = '<circle cx="40" cy="50" r="4.5" fill="#222"/><circle cx="60" cy="50" r="4.5" fill="#222"/>' +
+             '<circle cx="41.5" cy="48.5" r="1.3" fill="#fff"/><circle cx="61.5" cy="48.5" r="1.3" fill="#fff"/>';
+      mouth = '<ellipse cx="50" cy="69" rx="4" ry="5.5" fill="#222"/>';
+    } else if (expression === 'Grumpy') {
+      eyes = '<circle cx="40" cy="51" r="3.2" fill="#222"/><circle cx="60" cy="51" r="3.2" fill="#222"/>' +
+             '<path d="M31,37 L46,42 M69,37 L54,42" stroke="#222" stroke-width="3" stroke-linecap="round" fill="none"/>';
+      mouth = '<path d="M40,73 Q50,62 60,73" fill="none" stroke="#222" stroke-width="2.8" stroke-linecap="round"/>';
     } else {
-      eyes = '<circle cx="40" cy="50" r="3.5" fill="#222"/><circle cx="60" cy="50" r="3.5" fill="#222"/>';
-      mouth = '<path d="M40,64 Q50,74 60,64" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
+      eyes = '<circle cx="40" cy="50" r="3.5" fill="#222"/><circle cx="60" cy="50" r="3.5" fill="#222"/>' +
+             '<circle cx="41.2" cy="48.8" r="1.1" fill="#fff"/><circle cx="61.2" cy="48.8" r="1.1" fill="#fff"/>';
+      mouth = '<path d="M41,65 Q50,73 59,65" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
     }
     return eyes + mouth;
   }
@@ -145,58 +242,67 @@ var WhoArt = (function () {
     return { defs: '', fill: SHIRT[kind] || SHIRT['Solid Blue'] };
   }
 
+  /* ---------- held items ----------
+     The holding hand is at (85,100) on the right, or (15,100) on the left for the balloon.
+     Every item is drawn so the hand grips it. */
+  var HAND = { x: 85, y: 100 };
+  var LEFT_HAND = { x: 15, y: 100 };
+  function leftHanded(item) { return item === 'Balloon'; }
+
   function heldItem(kind) {
     switch (kind) {
       case 'Balloon':
-        return '<line x1="84" y1="92" x2="88" y2="36" stroke="#666" stroke-width="1.2"/>' +
-               '<ellipse cx="88" cy="28" rx="9" ry="11" fill="#e5484d"/>' +
-               '<polygon points="86,38 90,38 88,41" fill="#e5484d"/>';
+        // held in the LEFT hand, so the flip badge in the card's top-right corner never hides it;
+        // outlined so it shows even next to red hair
+        return '<path d="M15,98 Q18,70 10,44" fill="none" stroke="#666" stroke-width="1.2"/>' +
+               '<ellipse cx="10" cy="31" rx="9" ry="11" fill="#e5484d" stroke="#8a1c24" stroke-width="1.5"/>' +
+               '<polygon points="8,42 12,42 10,45" fill="#8a1c24"/>' +
+               '<ellipse cx="7" cy="27" rx="2" ry="3.5" fill="#fff" opacity=".55"/>';
       case 'Magnifying Glass':
-        return '<line x1="82" y1="104" x2="74" y2="112" stroke="#8a5a2b" stroke-width="3.5" stroke-linecap="round"/>' +
-               '<circle cx="86" cy="94" r="8" fill="#cfeeff" fill-opacity=".7" stroke="#555" stroke-width="2.5"/>';
+        return '<line x1="85" y1="101" x2="89" y2="91" stroke="#8a5a2b" stroke-width="4" stroke-linecap="round"/>' +
+               '<circle cx="91" cy="83" r="8.5" fill="#cfeeff" fill-opacity=".75" stroke="#555" stroke-width="2.8"/>' +
+               '<path d="M87,79 Q89,77 92,77" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>';
       case 'Ice Cream Cone':
-        return '<polygon points="80,92 92,92 86,112" fill="#d9a46a"/>' +
-               '<circle cx="86" cy="88" r="8" fill="#ff9fc9"/>';
+        return '<polygon points="79,86 93,86 86,106" fill="#d9a46a" stroke="#a87638" stroke-width="1"/>' +
+               '<path d="M81,90 L91,90 M83,95 L89,95" stroke="#a87638" stroke-width="1"/>' +
+               '<circle cx="86" cy="80" r="8.5" fill="#ff9fc9"/>' +
+               '<circle cx="83" cy="78" r="1" fill="#54d1db"/><circle cx="88" cy="76" r="1" fill="#ffe36b"/><circle cx="89" cy="82" r="1" fill="#3fb36b"/>';
       case 'Book':
-        return '<rect x="78" y="88" width="18" height="14" rx="1.5" fill="#3d7bdc"/>' +
-               '<rect x="80" y="90" width="14" height="10" fill="#ffffff"/>';
+        // a big green book with a spine, white pages and a star on the cover
+        return '<rect x="73" y="82" width="25" height="21" rx="2" fill="#2f9e6b" stroke="#1d6b47" stroke-width="1.5"/>' +
+               '<rect x="73" y="82" width="4.5" height="21" fill="#1d6b47"/>' +
+               '<rect x="95" y="84" width="2" height="17" fill="#ffffff"/>' +
+               '<text x="86.5" y="96" font-size="10" text-anchor="middle" fill="#ffe36b">&#9733;</text>';
       case 'Flashlight':
-        return '<rect x="78" y="92" width="16" height="7" rx="2" fill="#444" transform="rotate(-30 86 95)"/>' +
-               '<polygon points="92,84 100,78 100,90" fill="#fff3a0" opacity=".8"/>';
+        // a flashlight pointing up with a yellow beam
+        return '<polygon points="80,81 90,81 96,56 74,56" fill="#ffd84d" opacity=".55"/>' +
+               '<rect x="81" y="87" width="8" height="18" rx="2" fill="#555"/>' +
+               '<polygon points="78,80 92,80 89,88 81,88" fill="#777"/>' +
+               '<rect x="79" y="79" width="12" height="2.5" rx="1" fill="#fff3a0"/>' +
+               '<rect x="83.5" y="92" width="3" height="5" rx="1" fill="#e5484d"/>';
       default:
         return '';
     }
   }
 
-  // Each animal's snout and nose, so they are easy to tell apart. Drawn over the head.
-  function snout(species) {
-    if (/Clown/.test(species)) return '<circle cx="50" cy="58" r="5" fill="#e5484d"/>';
-    if (/Monster/.test(species)) return '';
-    switch (species) {
-      case 'Fox':
-        // pale, pointed muzzle with a black nose
-        return '<polygon points="34,54 66,54 50,76" fill="#fff3e0"/><circle cx="50" cy="55" r="3.5" fill="#222"/>';
-      case 'Cat':
-        // pink triangle nose and whiskers
-        return '<path d="M50,27 L50,35 M43,28 L44,35 M57,28 L56,35" stroke="#4a5263" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
-               '<polygon points="46,55 54,55 50,62" fill="#ff8fa3"/>' +
-               '<path d="M22,56 L36,58 M22,63 L36,61 M78,56 L64,58 M78,63 L64,61" stroke="#333" stroke-width="1.4" fill="none"/>';
-      case 'Bear':
-        // round light snout with a big black nose
-        return '<ellipse cx="50" cy="63" rx="15" ry="11" fill="#e3c9a2"/><ellipse cx="50" cy="57" rx="5" ry="3.8" fill="#222"/>';
-      case 'Dog':
-        // floppy-eared pup with a cream muzzle and black nose
-        return '<ellipse cx="50" cy="63" rx="13" ry="9" fill="#fbeedd"/><ellipse cx="50" cy="57" rx="6" ry="4.5" fill="#222"/>';
-      case 'Owl':
-        // big white eye rings and a little orange beak
-        return '<circle cx="40" cy="50" r="11" fill="#ffffff"/><circle cx="60" cy="50" r="11" fill="#ffffff"/>' +
-               '<ellipse cx="50" cy="63" rx="10" ry="7" fill="#f3e2c4"/><polygon points="46,59 54,59 50,67" fill="#f0a030"/>';
-      case 'Rabbit':
-        // small pink nose
-        return '<ellipse cx="50" cy="60" rx="4" ry="3" fill="#f08aa0"/>';
-      default:
-        return '';
-    }
+  /* ---------- arms and hands ----------
+     Short sleeves in the shirt's color. The right arm reaches out when holding something. */
+  // holding: 'right', 'left' or false
+  function arms(shirt, holding) {
+    var left = holding === 'left' ? 'M31,84 L' + (LEFT_HAND.x + 2) + ',' + (LEFT_HAND.y - 2) : 'M31,84 L24,106';
+    var right = holding === 'right' ? 'M69,84 L' + (HAND.x - 2) + ',' + (HAND.y - 2) : 'M69,84 L76,106';
+    var path = left + ' ' + right;
+    return '<path d="' + path + '" stroke="rgba(0,0,0,.18)" stroke-width="11" stroke-linecap="round" fill="none"/>' +
+           '<path d="' + path + '" stroke="' + shirt + '" stroke-width="8.5" stroke-linecap="round" fill="none"/>';
+  }
+
+  function hands(species, body, dark, holding) {
+    var fill = isClown(species) ? '#ffffff' : body;   // clowns wear white gloves
+    var edge = isClown(species) ? '#b9aca0' : species === 'Rabbit' ? '#b9aca0' : dark;
+    var rx = holding === 'right' ? HAND.x : 77, ry = holding === 'right' ? HAND.y : 108;
+    var lx = holding === 'left' ? LEFT_HAND.x : 23, ly = holding === 'left' ? LEFT_HAND.y : 108;
+    return '<circle cx="' + lx + '" cy="' + ly + '" r="5.5" fill="' + fill + '" stroke="' + edge + '" stroke-width="1.3"/>' +
+           '<circle cx="' + rx + '" cy="' + ry + '" r="5.5" fill="' + fill + '" stroke="' + edge + '" stroke-width="1.3"/>';
   }
 
   /* Returns SVG markup for one suspect. */
@@ -207,27 +313,37 @@ var WhoArt = (function () {
     var dark = DARK[species] || '#555';
     var id = 'pat' + (++uid);
     var shirt = shirtFill(t.shirt, id);
-    var cheek = '<ellipse cx="32" cy="60" rx="4" ry="2.5" fill="#ff8fa3" opacity=".5"/>' +
-                '<ellipse cx="68" cy="60" rx="4" ry="2.5" fill="#ff8fa3" opacity=".5"/>';
+    var holding = !t.item || t.item === 'None' ? false : leftHanded(t.item) ? 'left' : 'right';
+    var cheek = t.stars
+      // clowns with painted stars on their cheeks
+      ? '<text x="28" y="68" font-size="13" text-anchor="middle" fill="' + dark + '">&#9733;</text>' +
+        '<text x="72" y="68" font-size="13" text-anchor="middle" fill="' + dark + '">&#9733;</text>'
+      : '<ellipse cx="31" cy="61" rx="4" ry="2.5" fill="#ff8fa3" opacity=".5"/>' +
+        '<ellipse cx="69" cy="61" rx="4" ry="2.5" fill="#ff8fa3" opacity=".5"/>';
+    // a big yellow bow tie under the chin
+    var bowtie = t.bowtie
+      ? '<polygon points="34,74 50,82 34,90" fill="#f6c453" stroke="#c98a10" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '<polygon points="66,74 50,82 66,90" fill="#f6c453" stroke="#c98a10" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '<circle cx="50" cy="82" r="4" fill="#e39b1c"/>'
+      : '';
 
     return '<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' +
       '<defs>' + shirt.defs + '</defs>' +
-      // body and shirt
-      // shirts with white in them get a faint outline so they show on a white background
+      arms(shirt.fill, holding) +
+      // body and shirt; shirts with white in them get a faint outline so they show on a white background
       '<path d="M26,84 Q26,76 36,76 L64,76 Q74,76 74,84 L76,120 L24,120 Z" fill="' + shirt.fill + '"' +
       (t.shirt === 'Striped' || t.shirt === 'Polka-dot' ? ' stroke="#b9aca0" stroke-width="1.5"' : '') + '/>' +
-      // ears
-      ears(species, dark, body) +
-      // head (clowns have a white painted face)
-      '<ellipse cx="50" cy="52" rx="30" ry="27" fill="' + (/Clown/.test(species) ? '#fff7ef' : body) + '"' +
-      (species === 'Rabbit' ? ' stroke="#b9aca0" stroke-width="2.5"' : '') + '/>' +
-      // snout and nose (animals, clowns; monsters have none)
-      snout(species) +
+      ears(species, dark, body, t) +
+      head(species, body) +
+      snout(species, body, dark) +
       cheek +
+      bowtie +
       face(t.expression) +
+      frontBits(species, dark) +
       eyewear(t.eyewear) +
       headwear(t.headwear) +
       heldItem(t.item) +
+      hands(species, body, dark, holding) +
       '</svg>';
   }
 
