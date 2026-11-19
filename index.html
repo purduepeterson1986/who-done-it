@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Who Done It?">
   <!-- When any file below changes, change the ?v= tag on all four so browsers fetch the new copies. -->
-  <link rel="stylesheet" href="styles.css?v=2026-11-16b">
+  <link rel="stylesheet" href="styles.css?v=2026-11-18g">
 </head>
 <body>
   <div class="backdrop" aria-hidden="true"></div>
@@ -25,7 +25,7 @@
           <span class="logo-card lc2">&#128269;</span>
         </div>
         <h1>Who Done It?</h1>
-        <p>Read the clue. Guess who did it, or pass the clue to your friend. Guess wrong and you lose your turn.</p>
+        <p>Read the clue. Guess who did it, or pass the clue to your friend. Guess wrong and your friend gets the next two clues.</p>
       </header>
 
       <section class="panel" aria-labelledby="h-players">
@@ -47,6 +47,18 @@
       <section class="panel" aria-labelledby="h-level">
         <div class="panel-head"><h2 id="h-level">Difficulty</h2></div>
         <div class="levels" id="levels" role="radiogroup" aria-label="Difficulty"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-match">
+        <div class="panel-head"><h2 id="h-match">Score</h2></div>
+        <label class="switch-row">
+          <span class="switch-text">
+            <strong>Keep score</strong>
+            <span class="switch-sub">Solve a mystery: 3 points, minus 1 for each wrong guess you made on it.</span>
+          </span>
+          <input type="checkbox" class="switch" id="score-switch">
+        </label>
+        <div class="levels match-levels" id="match" role="radiogroup" aria-label="Match length"></div>
       </section>
 
       <section class="panel" aria-labelledby="h-theme">
@@ -85,9 +97,15 @@
     <div class="game-body">
       <div class="question" id="question"></div>
 
+      <div class="scoreboard" id="scoreboard" aria-live="polite"></div>
+
       <section class="clue-card" aria-live="polite">
         <div class="turn-pill" id="turn-pill"><span class="name-dot" id="turn-dot"></span><span id="turn-text"></span></div>
         <p class="clue-text" id="clue-text"></p>
+        <div class="clue-log-wrap" id="clue-log-wrap" hidden>
+          <h3 class="clue-log-head">Clues so far: the culprit…</h3>
+          <ol class="clue-log" id="clue-log"></ol>
+        </div>
       </section>
 
       <div class="board" id="board" role="list"></div>
@@ -112,8 +130,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="mystery.js?v=2026-11-16b"></script>
-  <script src="art.js?v=2026-11-16b"></script>
-  <script src="game.js?v=2026-11-16b"></script>
+  <script src="mystery.js?v=2026-11-18g"></script>
+  <script src="art.js?v=2026-11-18g"></script>
+  <script src="game.js?v=2026-11-18g"></script>
 </body>
 </html>

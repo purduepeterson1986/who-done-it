@@ -4,6 +4,25 @@
 var WhoDoneIt = (function () {
   'use strict';
 
+  // Facts. Each one is yes or no for every character, set by its species,
+  // so they never pick a random value. Each theme has its own list.
+  // Animal facts are things kids know about the animals.
+  var ANIMAL_FACTS = [
+    { key: 'house', animals: ['Cat', 'Dog'], phrase: 'lives in a house' },
+    { key: 'woods', animals: ['Fox', 'Bear', 'Owl', 'Rabbit'], phrase: 'lives in the woods' },
+    { key: 'den', animals: ['Fox', 'Bear', 'Rabbit'], phrase: 'has an underground den or burrow' },
+    { key: 'night', animals: ['Owl', 'Fox', 'Cat'], phrase: 'is awake at night' },
+    { key: 'pet', animals: ['Cat', 'Dog', 'Rabbit'], phrase: 'can be a pet' },
+    { key: 'pointy', animals: ['Fox', 'Cat', 'Owl'], phrase: 'has pointy ears' }
+  ];
+  // Clown facts show in the picture (art.js draws them from these traits).
+  // Each is true for 3 of the 6 clowns, and no two clowns have the same mix.
+  var CLOWN_FACTS = [
+    { key: 'curly', animals: ['Red Clown', 'Blue Clown', 'Yellow Clown'], phrase: 'has curly hair' },
+    { key: 'bowtie', animals: ['Red Clown', 'Green Clown', 'Purple Clown'], phrase: 'is wearing a bow tie' },
+    { key: 'stars', animals: ['Blue Clown', 'Green Clown', 'Orange Clown'], phrase: 'has stars painted on its cheeks' }
+  ];
+
   var THEMES = [
     {
       id: 'cake',
@@ -11,7 +30,7 @@ var WhoDoneIt = (function () {
       intro: 'The party starts soon, but the giant strawberry cake has vanished!',
       question: 'Who ate the giant strawberry cake before the party?',
       ending: 'The cake is back on the table, and the party can start. Everyone gets a slice!',
-      animals: true,
+      facts: ANIMAL_FACTS,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -20,7 +39,7 @@ var WhoDoneIt = (function () {
       intro: 'A wrapped present was waiting on the doorstep, with no name on it.',
       question: 'Who left the mystery present on the doorstep?',
       ending: 'The mystery is solved, and the present can finally be opened!',
-      animals: true,
+      facts: ANIMAL_FACTS,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -29,7 +48,7 @@ var WhoDoneIt = (function () {
       intro: 'A mischievous puppy has run away, and someone knows where it went.',
       question: 'Who is hiding the mischievous puppy in their treehouse?',
       ending: 'The puppy is home safe, wagging its tail. Good detective work!',
-      animals: true,
+      facts: ANIMAL_FACTS,
       species: ['Fox', 'Bear', 'Owl', 'Rabbit', 'Cat', 'Dog']
     },
     {
@@ -38,6 +57,7 @@ var WhoDoneIt = (function () {
       intro: 'The big circus balloon floated away, and the clowns all say it wasn’t them.',
       question: 'Which clown let the balloon get away?',
       ending: 'The balloon is back at the circus, and the show can go on!',
+      facts: CLOWN_FACTS,
       species: ['Red Clown', 'Blue Clown', 'Green Clown', 'Yellow Clown', 'Purple Clown', 'Orange Clown']
     }
   ];
@@ -47,7 +67,7 @@ var WhoDoneIt = (function () {
     eyewear: ['None', 'Sunglasses', 'Round Glasses', 'Monocle'],
     shirt: ['Solid Red', 'Solid Blue', 'Striped', 'Polka-dot', 'Star Shirt'],
     item: ['None', 'Balloon', 'Magnifying Glass', 'Ice Cream Cone', 'Book', 'Flashlight'],
-    expression: ['Happy smile', 'Surprised', 'Winking']
+    expression: ['Happy smile', 'Surprised', 'Grumpy']
   };
 
   // What each trait value says about a suspect. Used to write the clue sentences.
@@ -83,7 +103,7 @@ var WhoDoneIt = (function () {
     expression: {
       'Happy smile': 'has a happy smile',
       'Surprised': 'looks surprised',
-      'Winking': 'is winking'
+      'Grumpy': 'looks grumpy'
     }
   };
 
@@ -100,18 +120,8 @@ var WhoDoneIt = (function () {
   var FIXED = { headwear: 'None', eyewear: 'None', shirt: 'Solid Blue', item: 'None', expression: 'Happy smile' };
   var OPTIONAL_TRAITS = ['headwear', 'eyewear', 'shirt', 'item', 'expression'];
 
-  // Animal facts. Each one is yes or no for every animal, set by its species,
-  // so they never pick a random value. Only used by the animal mysteries.
-  var FACTS = [
-    { key: 'house', animals: ['Cat', 'Dog'], phrase: 'lives in a house' },
-    { key: 'woods', animals: ['Fox', 'Bear', 'Owl', 'Rabbit'], phrase: 'lives in the woods' },
-    { key: 'den', animals: ['Fox', 'Bear', 'Rabbit'], phrase: 'has an underground den or burrow' },
-    { key: 'night', animals: ['Owl', 'Fox', 'Cat'], phrase: 'is awake at night' },
-    { key: 'pet', animals: ['Cat', 'Dog', 'Rabbit'], phrase: 'can be a pet' },
-    { key: 'pointy', animals: ['Fox', 'Cat', 'Owl'], phrase: 'has pointy ears' }
-  ];
   var FACT_PHRASE = {};
-  FACTS.forEach(function (f) { FACT_PHRASE[f.key] = f.phrase; });
+  ANIMAL_FACTS.concat(CLOWN_FACTS).forEach(function (f) { FACT_PHRASE[f.key] = f.phrase; });
 
   function pick(arr, rnd) { return arr[Math.floor(rnd() * arr.length)]; }
 
@@ -163,7 +173,7 @@ var WhoDoneIt = (function () {
     eyewear: { 'Sunglasses': 'sunglasses', 'Round Glasses': 'round glasses', 'Monocle': 'a monocle' },
     shirt: { 'Solid Red': 'a red shirt', 'Solid Blue': 'a blue shirt', 'Striped': 'a striped shirt', 'Polka-dot': 'a polka-dot shirt', 'Star Shirt': 'a star shirt' },
     item: { 'Balloon': 'a balloon', 'Magnifying Glass': 'a magnifying glass', 'Ice Cream Cone': 'an ice cream cone', 'Book': 'a book', 'Flashlight': 'a flashlight' },
-    expression: { 'Happy smile': 'a happy smile', 'Surprised': 'a surprised face', 'Winking': 'a wink' }
+    expression: { 'Happy smile': 'a happy smile', 'Surprised': 'a surprised face', 'Grumpy': 'a grumpy face' }
   };
 
   function describe(s, active) {
@@ -301,7 +311,7 @@ var WhoDoneIt = (function () {
     var optional = shuffle(OPTIONAL_TRAITS, rnd).slice(0, cfg.traits - 1);
     var active = ['species'].concat(optional);
 
-    var facts = theme.animals ? FACTS : [];
+    var facts = theme.facts || [];
 
     var suspects = buildSuspects(theme, active, cfg, rnd, facts);
     var culpritIndex = Math.floor(rnd() * suspects.length);
